@@ -11,10 +11,25 @@ class ExpenseCard extends StatefulWidget {
 
 class _ExpenseCardState extends State<ExpenseCard> {
   void _rmoveExpense(Expense expense) {
+    final idx = Expense.item.indexOf(expense);
     setState(() {
       Expense.item.remove(expense);
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 3),
+      content: const Text("Expense Deleted"),
+      action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              Expense.item.insert(idx, expense);
+            });
+          }),
+    ));
   }
+
+  // Widget mainContent = const Center(child: Text("No Expense here"));
 
   @override
   Widget build(BuildContext context) {
