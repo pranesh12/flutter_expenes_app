@@ -11,7 +11,11 @@ class ExpenseList extends StatelessWidget {
           child: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Row(
-          children: [Text(expense.name), Spacer(), Text("34")],
+          children: [
+            Text(expense.name),
+            const Spacer(),
+            Text(expense.price.toString())
+          ],
         ),
       )),
     );

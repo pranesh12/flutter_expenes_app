@@ -2,7 +2,8 @@ import 'package:expense_tracker/model/expense_model.dart';
 import 'package:flutter/material.dart';
 
 class AddExpense extends StatefulWidget {
-  const AddExpense({super.key});
+  const AddExpense({super.key, required this.addExpense});
+  final void Function(Expense expense) addExpense;
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -10,24 +11,34 @@ class AddExpense extends StatefulWidget {
 
 class _AddExpenseState extends State<AddExpense> {
   final _formKey = GlobalKey<FormState>();
+
   final _expenseNameController = TextEditingController();
   final _priceController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  DateTime? _selectDate;
+  TimeOfDay? _selectTime;
 
-  void _addExpense(Expense expense) {
-    Expense.item.add(expense);
-  }
-
-  void _presentDatePicker() {
+  void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-    final datePicker =
-        showDatePicker(context: context, firstDate: now, lastDate: now);
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: now,
+    );
+    setState(() {
+      _selectDate = pickedDate;
+      print("Date  is $_selectDate");
+    });
   }
 
-  void _timePicker() {
-    showTimePicker(context: context, initialTime: TimeOfDay.now());
+  void _timePicker() async {
+    final now = TimeOfDay.now();
+
+    setState(() {
+      _selectTime = now;
+      print("Time is $_selectTime");
+    });
   }
 
   void _submitExpense() {
@@ -39,8 +50,12 @@ class _AddExpenseState extends State<AddExpense> {
     final expense = _expenseNameController.text;
     final price = double.parse(_priceController.text);
     final newExpense = Expense(name: expense, price: price);
-    _addExpense(newExpense);
+    widget.addExpense(newExpense);
 
+    _expenseNameController.clear();
+    _priceController.clear();
+
+    Navigator.pop(context);
     setState(() {});
   }
 
